@@ -1,12 +1,40 @@
 # TradeFlow
 
+Spring Framework
+│
+├── Spring Core
+│   └── IoC / Beans / Injection de dépendances
+│
+├── Spring MVC
+│   └── Web
+│       └── DispatcherServlet
+│           └── Servlet API (Jakarta)
+│
+├── Spring Data
+│   └── accès aux données
+│
+├── Spring Security
+│   └── authentification / autorisation
+│
+└── plein d'autres fonctionnalités
 
-Spring Web
-   │
-   ├── Spring MVC      → routing, controllers HTTP
-   ├── Tomcat          → serveur HTTP
-   ├── Jackson         → Java ↔ JSON
-   └── outils HTTP
+
+Java / Jakarta
+      ↑
+Spring Framework
+├── Core (DI, Beans)
+├── MVC
+├── Security
+├── Data
+└── ...
+      ↑
+Spring Boot
+→ auto-configuration
+→ starters
+→ serveur embarqué (Tomcat)
+→ application directement exécutable
+→ application.properties
+→ Actuator...
 
 ==================================================================
 
@@ -103,6 +131,99 @@ http://localhost:3000/api-docs
 http://localhost:3001/actuator/health
 
 ==================================================================================
+===================================================================================
+Spring Boot au démarrage : 
+--------------------------
+
+                SPRING BOOT
+                    │
+                    ▼
+            ApplicationContext
+                    │
+          component scanning
+                    │
+      ┌─────────────┼─────────────┐
+      ▼             ▼             ▼
+ @Controller     @Service     @Component
+      │             │             │
+      ▼             ▼             ▼
+    Bean           Bean          Bean
+
+
+au runtime : 
+------------
+
+Client
+  │
+  │ HTTP
+  ▼
+┌─────────────────────┐
+│       TOMCAT        │
+│ Servlet Container   │
+│                     │
+│ comprend HTTP       │
+│ écoute port 8080    │
+│ crée request/resp.  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ DispatcherServlet   │
+│                     │
+│ comprend Spring MVC │
+│ trouve Controller   │
+└──────────┬──────────┘
+           │
+           ▼
+     UserController
+
+
+
+==========================================================================
+dans le modèle Spring MVC classique avec Tomcat , une requête est traitée par un thread pendant son traitement
+
+
+
+              TOMCAT
+                │
+           Thread Pool
+      ┌─────────┼─────────┐
+      ▼         ▼         ▼
+   Thread 1  Thread 2  Thread 3
+      │         │         │
+ Request A   Request B   Request C
+      │         │         │
+   Filters   Filters   Filters
+      │         │         │
+ Dispatcher Dispatcher Dispatcher
+      │         │         │
+ Controller Controller Controller
+      │         │         │
+  Service     Service    Service
+
+
+
+               Thread Pool Tomcat
+               -------------------
+      T1   T2   T3   T4 ... T200
+      ↑
+      │
+nouvelle requête
+      │
+Tomcat prend un thread disponible
+
+
+Thread-42
+   │
+   ├── Filter
+   ├── Spring Security
+   ├── DispatcherServlet
+   ├── Interceptor
+   ├── Controller
+   ├── Service
+   ├── Repository
+   └── réponse
+
 
 servlet jakarta ~ express  : un objet Java capable de recevoir une requête HTTP et de produire une réponse HTTP, mecanisme de jakartaEE anciennement J2E (JEE).
 
@@ -322,6 +443,15 @@ public class RolesInterceptor implements HandlerInterceptor {
 
 
 
+NESTJS                         SPRING MVC
+
+ExecutionContext              HandlerMethod + request
+      │                             │
+getHandler()                  getMethod()
+      │                             │
+Reflector.get(...)            getMethodAnnotation(...)
+      │                             │
+metadata                      annotation
 
 
 
@@ -330,101 +460,9 @@ public class RolesInterceptor implements HandlerInterceptor {
 
 
 
-
-===================================================================================
-Spring Boot au démarrage : 
---------------------------
-
-                SPRING BOOT
-                    │
-                    ▼
-            ApplicationContext
-                    │
-          component scanning
-                    │
-      ┌─────────────┼─────────────┐
-      ▼             ▼             ▼
- @Controller     @Service     @Component
-      │             │             │
-      ▼             ▼             ▼
-    Bean           Bean          Bean
-
-
-au runtime : 
-------------
-
-Client
-  │
-  │ HTTP
-  ▼
-┌─────────────────────┐
-│       TOMCAT        │
-│ Servlet Container   │
-│                     │
-│ comprend HTTP       │
-│ écoute port 8080    │
-│ crée request/resp.  │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ DispatcherServlet   │
-│                     │
-│ comprend Spring MVC │
-│ trouve Controller   │
-└──────────┬──────────┘
-           │
-           ▼
-     UserController
-
-
-
-==========================================================================
-dans le modèle Spring MVC classique avec Tomcat , une requête est traitée par un thread pendant son traitement
-
-
-
-              TOMCAT
-                │
-           Thread Pool
-      ┌─────────┼─────────┐
-      ▼         ▼         ▼
-   Thread 1  Thread 2  Thread 3
-      │         │         │
- Request A   Request B   Request C
-      │         │         │
-   Filters   Filters   Filters
-      │         │         │
- Dispatcher Dispatcher Dispatcher
-      │         │         │
- Controller Controller Controller
-      │         │         │
-  Service     Service    Service
-
-
-
-               Thread Pool Tomcat
-               -------------------
-      T1   T2   T3   T4 ... T200
-      ↑
-      │
-nouvelle requête
-      │
-Tomcat prend un thread disponible
-
-
-Thread-42
-   │
-   ├── Filter
-   ├── Spring Security
-   ├── DispatcherServlet
-   ├── Interceptor
-   ├── Controller
-   ├── Service
-   ├── Repository
-   └── réponse
-
-
+=============================================================================
+Transporter des informations (claims) tout en garantissant qu’elles n’ont pas été falsifiées et qu’elles proviennent d’un émetteur de confiance.
+============================================================================
 
 
 

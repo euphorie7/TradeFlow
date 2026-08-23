@@ -3,58 +3,56 @@ package com.euphorie.user.service;
 
 import com.euphorie.user.entity.User;
 import com.euphorie.user.repository.UserRepository;
-import com.euphorie.user.mapper.UserMapper;
-import com.euphorie.user.dto.UserResponseDto;
 import com.euphorie.user.dto.CreateUserDto;
 import com.euphorie.exception.NotFoundException;
 
-
-// component
+import com.euphorie.user.dto.UserResponseDto;
+// Bean
 import org.springframework.stereotype.Service;
 // lib
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
+import com.euphorie.user.mapper.UserMapper;
 import java.util.List;
 import java.util.Optional;
 
 @Service 
 public class UserService {
 
+    private final UserRepository userRepository; 
     // private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final PasswordEncoder  passwordEncoder;
-    private final UserRepository   userRepository;  
-    private final UserMapper       userMapper;
+    private final UserMapper userMapper;
 
-    public UserService( UserRepository userRepository, 
+    public UserService( UserRepository userRepository,
                         PasswordEncoder  passwordEncoder,
                         UserMapper userMapper) {
-        this.userRepository = userRepository;
+        this.userRepository  = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
-
+        this.userMapper      = userMapper;
     }
 
 
-    public List<UserResponseDto>  findAll() {
+    public List<UserResponseDto> findAll() {
         return userRepository.findAll()
-                .stream()
-                .map(user -> userMapper.toDto(user))
-                .toList();
-    }  
+            .stream()
+            .map(user -> userMapper.toDto(user))
+            .toList();
+    }
 
-    public UserResponseDto  findById(Long id ) {
+    public UserResponseDto findById(Long id) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("User Not Found"));
 
         return userMapper.toDto(user);
     }
 
-    public UserResponseDto findByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new NotFoundException("User Not Found"));
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 
-        return userMapper.toDto(user);
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public UserResponseDto create(CreateUserDto dto) {
@@ -68,11 +66,12 @@ public class UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
-    public UserResponseDto deleteById(Long id ) {
+    public UserResponseDto deleteById(Long id) {
+
         UserResponseDto userResponseDto = findById(id);
-        userRepository.deleteById(userResponseDto.getId());
+
+        userRepository.deleteById(id);
 
         return userResponseDto;
     }
-
 }

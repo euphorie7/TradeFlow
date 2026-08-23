@@ -26,7 +26,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
+    // preauthorise
 
     // POST /users
     @PostMapping
@@ -45,12 +45,6 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponseDto findById(@PathVariable Long id) {
         return userService.findById(id);
-    }
-
-    // GET /users/email/{email}
-    @GetMapping("/email/{email}")
-    public UserResponseDto findByEmail(@PathVariable String email) {
-        return userService.findByEmail(email);
     }
 
     // DELETE /users/{id}

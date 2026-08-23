@@ -1,14 +1,13 @@
-package com.euphorie.user.dto;
+package com.euphorie.auth.dto;
+
+import lombok.Data;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.Builder;
 
 @Data
-@Builder
-public class CreateUserDto {
+public class SignInDto {
 
     @NotBlank
     @Email
@@ -17,5 +16,5 @@ public class CreateUserDto {
     @NotBlank
     @Size(min = 8)
     private String password;
-    
+
 }
