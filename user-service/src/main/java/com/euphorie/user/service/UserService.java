@@ -4,14 +4,17 @@ package com.euphorie.user.service;
 import com.euphorie.user.entity.User;
 import com.euphorie.user.repository.UserRepository;
 import com.euphorie.user.dto.CreateUserDto;
-import com.euphorie.exception.NotFoundException;
+
 
 import com.euphorie.user.dto.UserResponseDto;
 // Bean
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 // lib
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import com.euphorie.user.mapper.UserMapper;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +45,7 @@ public class UserService {
 
     public UserResponseDto findById(Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("User Not Found"));
+            .orElseThrow(() -> new  ResponseStatusException( HttpStatus.NOT_FOUND, "User Not Found"));
 
         return userMapper.toDto(user);
     }

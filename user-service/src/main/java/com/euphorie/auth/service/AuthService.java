@@ -14,9 +14,12 @@ import com.euphorie.auth.dto.SignInDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.BadCredentialsException;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.server.ResponseStatusException;
 
 // adapte ce chemin selon l'endroit où tu as créé l'exception
-import com.euphorie.exception.ConflictException;
+
 
 @Service
 public class AuthService {
@@ -41,7 +44,7 @@ public class AuthService {
     public UserResponseDto signUp(SignUpDto dto) {
 
         if (userService.existsByEmail(dto.getEmail())) {
-            throw new ConflictException(
+            throw new ResponseStatusException( HttpStatus.BAD_REQUEST,
                 "Cet utilisateur est deja inscrit."
             );
         }
