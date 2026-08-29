@@ -1,0 +1,47 @@
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center">
+
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 grid grid-cols-1  gap-y-2" >
+      
+      <!-- Tabs -->
+    <div class="flex bg-gray-100 rounded-xl p-1">
+          
+        <div
+        class="flex-1 text-center py-3 rounded-lg
+            text-gray-500 font-medium
+            transition-all duration-200"
+            >
+            <input id="tab-up" type="button" (click)="setActiveTab('signup')"/>
+            <label for="tab-up">Sign Up</label>
+            
+        
+        </div>
+
+        <div
+        class="flex-1 text-center py-3 rounded-lg
+            text-gray-500 font-medium
+            transition-all duration-200"
+            >
+            <input id="tab-in" type="button" (click)="setActiveTab('signin')"/>
+            <label for="tab-in">Sign In</label>
+            
+        
+        </div>
+        
+    </div>
+    <div class = "w-full bg-gray-100  rounded-2xl p-5">
+        <!-- SignIn ou SignUp -->
+        @if (activeTab === 'signin') {
+        <signin  />
+        } @else {
+        <signup />
+        }
+
+
+    </div>
+
+  
+
+  </div>
+
+</div>

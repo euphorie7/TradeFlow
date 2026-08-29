@@ -1,5 +1,20 @@
 # TradeFlow
 
+
+Spring Framework
+│
+├── Spring Core
+├── Spring MVC
+├── Spring Security
+├── Spring Data
+│    └── Spring Data JPA
+└── ...
+        ↑
+Spring Boot
+→ facilite l'installation, la configuration
+  et le démarrage de tout ça
+
+  
 Spring Framework
 │
 ├── Spring Core
@@ -19,6 +34,7 @@ Spring Framework
 └── plein d'autres fonctionnalités
 
 
+
 Java / Jakarta
       ↑
 Spring Framework
@@ -35,6 +51,9 @@ Spring Boot
 → application directement exécutable
 → application.properties
 → Actuator...
+
+
+
 
 ==================================================================
 
@@ -471,5 +490,25 @@ Transporter des informations (claims) tout en garantissant qu’elles n’ont pa
 
 
 
-
-
+SecurityFilterChain
+       ↓
+problème d'autorisation/authentification
+       ↓
+ExceptionTranslationFilter
+       ↓
+       ├── AuthenticationException
+       │        ↓
+       │   AuthenticationEntryPoint
+       │        ↓
+       │       401
+       │
+       └── AccessDeniedException
+                ↓
+          utilisateur authentifié ?
+                │
+          ┌─────┴─────┐
+          │           │
+         NON         OUI
+          │           │
+   EntryPoint     AccessDeniedHandler
+      401              403
