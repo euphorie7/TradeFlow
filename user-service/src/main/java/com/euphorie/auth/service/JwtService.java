@@ -18,7 +18,6 @@ import com.euphorie.user.dto.UserResponseDto;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 
-import org.springframework.security.authentication.BadCredentialsException;
 
 
 @Service
@@ -39,7 +38,7 @@ public class JwtService {
         Instant now = Instant.now();
 
         JwtClaimsSet payload = JwtClaimsSet.builder()
-                                .subject(dto.getEmail())
+                                .claim("mail",dto.getEmail())
                                 .claim("id" , dto.getId())
                                 .issuedAt(now)
                                 .expiresAt(now.plusSeconds(3600))
