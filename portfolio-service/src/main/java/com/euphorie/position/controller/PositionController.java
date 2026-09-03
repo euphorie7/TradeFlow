@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.euphorie.position.dto.PositionResponseDto;
 import com.euphorie.position.entity.Position;
 import com.euphorie.position.service.PositionService;
 
@@ -22,7 +22,7 @@ public class PositionController {
     }
 
     @GetMapping("/portfolio/{portfolioId}")
-    public List<Position> getPositionsByPortfolioId(
+    public List<PositionResponseDto> getPositionsByPortfolioId(
             @PathVariable Long portfolioId,
             @AuthenticationPrincipal(expression = "claims['id']") Long userId) {
 

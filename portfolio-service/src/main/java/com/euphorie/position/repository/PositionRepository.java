@@ -8,5 +8,7 @@ import java.util.Optional;
 
 public interface PositionRepository extends JpaRepository<Position,Long> {
     List<Position> findByPortfolioId(Long portfolioId);
+    Optional<Position> findByPortfolioIdAndSymbol(Long portfolioId,
+                                                  String symbol);
 
 }

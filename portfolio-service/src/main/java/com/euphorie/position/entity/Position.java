@@ -7,7 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import com.euphorie.portfolio.entity.Portfolio;
 @Entity
-@Table(name = "positions")
+@Table(name = "positions",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"portfolio_id", "symbol"})
+        }
+)
 @Getter
 @Setter
 public class Position {
