@@ -12,7 +12,6 @@ import com.euphorie.portfolio.mapper.PortfolioMapper;
 import com.euphorie.portfolio.dto.CreatePortfolioDto;
 import com.euphorie.portfolio.dto.PortfolioResponseDto;
 
-
 import org.springframework.web.server.ResponseStatusException;
 
 
