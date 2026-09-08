@@ -187,7 +187,7 @@ Portfolio Service
 - [x] Kafka conteneurisé
 - [x] Portainer
 - [x] pgAdmin
-- [ ] Dockeriser chaque microservice
+- [x] Dockeriser chaque microservice
 - [ ] Réseau Docker interne
 - [ ] Health checks
 - [ ] Variables d'environnement / secrets
@@ -211,12 +211,27 @@ Portfolio Service
 - [x] Git
 - [x] Maven
 - [x] Docker
+
+### Outils CI/CD
 - [x] Jenkins
-- [ ] Pipeline TradeFlow
-- [ ] Build automatique
+- [x] GitHub Actions
+  - [x] Workflows YAML
+  - [x] Jobs / Steps
+  - [x] Matrix Strategy
+  - [x] GitHub Actions Runner
+  - [x] Self-hosted Runner
+  - [x] GitHub Actions
+  - [x] GITHUB_TOKEN
+  - [x] GitHub Container Registry (GHCR)
+
+### Pipeline TradeFlow
+- [x] Déclenchement automatique sur `push`
+- [x] Build Maven automatique
 - [ ] Tests automatiques
-- [ ] Build des images Docker
-- [ ] Déploiement automatisé
+- [x] Génération des Dockerfiles
+- [x] Build des images Docker
+- [x] Push des images vers GHCR
+- [ ] Déploiement automatique Kubernetes
 
 ---
 
@@ -234,6 +249,48 @@ Portfolio Service
 - [ ] Cache
 
 ---
+
+## 13. CI/CD
+
+push → deploy
+      │
+      ▼
+GitHub Actions
+      │
+      ├─────────────────────┬─────────────────────┐
+      │                     │                     │
+      ▼                     ▼                     ▼
+ user-service        portfolio-service      order-service
+      │                     │                     │
+      ▼                     ▼                     ▼
+  checkout               checkout               checkout
+      │                     │                     │
+      ▼                     ▼                     ▼
+ setup Java 21         setup Java 21         setup Java 21
+      │                     │                     │
+      ▼                     ▼                     ▼
+ mvn package           mvn package           mvn package
+      │                     │                     │
+      ▼                     ▼                     ▼
+ create Dockerfile     create Dockerfile     create Dockerfile
+      │                     │                     │
+      ▼                     ▼                     ▼
+ login GHCR            login GHCR            login GHCR
+      │                     │                     │
+      ▼                     ▼                     ▼
+ docker build          docker build          docker build
+      │                     │                     │
+      ▼                     ▼                     ▼
+ docker push           docker push           docker push
+      │                     │                     │
+      └──────────────┬──────┴──────────────┬──────┘
+                     │                     │
+                     ▼                     ▼
+              GitHub Container Registry
+                     │
+                     ▼
+                 Kubernetes
+
 
 # Progression recommandée
 

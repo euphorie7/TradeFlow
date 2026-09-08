@@ -1,0 +1,106 @@
+name : deploy tradflow pipeline
+
+
+on   :
+    push : 
+        branches : 
+            - deploy
+
+# jobs est un map pas une liste !
+jobs : 
+    # ----------------------------------------------------------
+    # premier job , on build les packages (jar)! 
+    # ----------------------------------------------------------
+    build:
+        permissions:
+          contents: read
+          packages: write
+        strategy: 
+            matrix :
+                microservice : 
+                    - user-service
+                    - portfolio-service
+                    - order-service
+        runs-on : self-hosted
+
+
+        steps : 
+            # ----------------------------------------------------------
+            # Recuperer le code ! 
+            # ----------------------------------------------------------
+            - name : Recuprer le code 
+              # ca u tilise une action de github
+              uses :  actions/checkout@v4
+
+            # ----------------------------------------------------------
+            # Installer  java 21  
+            # ----------------------------------------------------------
+            - name : Installer java 
+              uses : actions/setup-java@v4
+              # parametres de l'action 
+              with : 
+                  # Distribution du JDK utilisée.
+                  # Temurin correspond à la distribution Eclipse Temurin.
+                  distribution: temurin
+                  java-version : '21'
+
+            # ----------------------------------------------------------
+            # Build le microservice : ${matrix.microservice}
+            # ----------------------------------------------------------
+            - name : Build packege of ${{ matrix.microservice }}
+
+              working-directory: ./${{ matrix.microservice }}
+              # ./mvnw
+              # → utilise le Maven Wrapper du projet pour la coherence CI
+              #
+              # clean
+              # → supprime l'ancien dossier target/
+              #
+              # package
+              # → compile l'application et génère le .jar
+              #
+              # -DskipTests
+              # → ne lance pas les tests
+              run : ./mvnw clean package -DskipTests
+
+            # ----------------------------------------------------------
+            # Construire le Dockerfile du microservice
+            # ----------------------------------------------------------
+            - name: Create Dockerfile of ${{ matrix.microservice }}
+              working-directory: ./${{ matrix.microservice }}
+              run: |
+                cat << 'EOF' > Dockerfile
+                FROM eclipse-temurin:21-jre
+
+                WORKDIR /app
+
+                COPY target/*.jar app.jar
+
+                ENTRYPOINT ["java", "-jar", "app.jar"]
+                EOF
+
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build Docker image of ${{ matrix.microservice }}
+              working-directory: ./${{ matrix.microservice }}
+              run: |
+                docker build \
+                  -t ghcr.io/${{ github.repository_owner }}/tradeflow-${{ matrix.microservice }}:1.${{ github.run_number }} \
+                  .
+
+            - name: Push Docker image
+              run: |
+                docker push \
+                  ghcr.io/${{ github.repository_owner }}/tradeflow-${{ matrix.microservice }}:1.${{ github.run_number }}
+
+                      
+
+
+
+          
+

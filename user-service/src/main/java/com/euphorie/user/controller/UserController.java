@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.euphorie.user.dto.CreateUserDto;
 import com.euphorie.user.dto.UserResponseDto;
 import com.euphorie.user.service.UserService;
+
 // Bean 
 @RestController()
 @RequestMapping("/users")

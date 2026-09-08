@@ -1,0 +1,11 @@
+# image de base java 21 jre -> jvm +  bibliothques :)
+FROM eclipse-temurin:21-jre
+
+# dossier de travail dans le future conteneur 
+WORKDIR /app
+
+# on copie le jar de mon app dans le app.jar du conteneur!
+COPY target/*.jar app.jar
+
+# commande de lancement du bytecode 
+ENTRYPOINT ["java", "-jar", "app.jar"]
