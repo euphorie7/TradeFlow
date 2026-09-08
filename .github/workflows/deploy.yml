@@ -99,8 +99,22 @@ jobs :
                   ghcr.io/${{ github.repository_owner }}/tradeflow-${{ matrix.microservice }}:1.${{ github.run_number }}
 
                       
+    tag:
+        needs: build
+        runs-on: self-hosted
 
+        permissions:
+            contents: write
+        steps : 
+            - name: Recuperer le commit ayant declenche la pipeline
+              uses: actions/checkout@v4
+              with:
+                ref: ${{ github.sha }}
 
-
+            - name: Create Git tag
+              run: |
+                git tag "v1.${{ github.run_number }}"
+                git push origin "v1.${{ github.run_number }}"
+            
           
 
