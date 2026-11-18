@@ -1,4 +1,4 @@
-package com.euphorie.auth.service;
+package com.euphorie.jwt.service;
 
 
 import org.springframework.stereotype.Service;
@@ -37,12 +37,18 @@ public class JwtService {
 
         Instant now = Instant.now();
 
-        JwtClaimsSet payload = JwtClaimsSet.builder()
-                                .claim("mail",dto.getEmail())
-                                .claim("id" , dto.getId())
-                                .issuedAt(now)
-                                .expiresAt(now.plusSeconds(3600))
-                                .build();
+        JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
+            .subject(dto.getId().toString())
+            .issuedAt(Instant.now())
+            .expiresAt(Instant.now().plusSeconds(3600));
+
+        if (dto.getEmail() != null) {
+            claims.claim("email", dto.getEmail());
+        } else if (dto.getGithubPseudo() != null) {
+            claims.claim("github_pseudo", dto.getGithubPseudo());
+        }
+
+        JwtClaimsSet payload = claims.build();
 
         //Je veux signer CE JWT avec HS256.
         JwsHeader header = JwsHeader

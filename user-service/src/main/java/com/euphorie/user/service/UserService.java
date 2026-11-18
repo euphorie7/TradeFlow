@@ -50,6 +50,22 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    public UserResponseDto findOrCreate(
+        String githubId,
+        String githubPseudo) {
+        User user = userRepository.findByGithubId(githubId)
+            .orElseGet(() -> {
+                 User newUser = new User();
+               
+                 newUser.setGithubId(githubId);
+                 newUser.setGithubPseudo(githubPseudo);
+
+                 return userRepository.save(newUser);
+            });
+
+        return userMapper.toDto(user);
+    }
+
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }

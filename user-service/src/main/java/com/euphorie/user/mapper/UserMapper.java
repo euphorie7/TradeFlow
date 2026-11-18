@@ -13,7 +13,13 @@ public class UserMapper {
         return UserResponseDto.builder()
         .id(user.getId())
         .email(user.getEmail())
-        .pseudo(String.join(" ", user.getEmail().split("@")[0].split("\\.")))
+        .githubPseudo(
+            user.getGithubPseudo() != null 
+            ? 
+            user.getGithubPseudo()
+            :
+            String.join(" ", user.getEmail().split("@")[0].split("\\."))
+        )
         .build();
     }
 

@@ -1,4 +1,4 @@
-package com.euphorie.filters;
+package com.euphorie.security.filters;
 
 
 import java.io.IOException;
@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.euphorie.auth.service.JwtService;
-
+import com.euphorie.jwt.service.JwtService;
+import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -34,20 +34,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             FilterChain filterChain
         ) throws ServletException, IOException {
 
+                    String token = null;
 
                     // focus sur l'objet authorization
                     String authorization = request.getHeader("Authorization");
 
                     // si y a pas un bearer token on n'eglige et passe au method security ! 
 
-                    if (authorization == null || !authorization.startsWith("Bearer ")) {
+                    if (authorization != null && authorization.startsWith("Bearer ")) {
+                        token = authorization.substring(7);
+                    }
 
+                    if (token == null && request.getCookies() != null) {
+                        for (Cookie cookie : request.getCookies()) {
+                            if ("access_token".equals(cookie.getName())) {
+                                token = cookie.getValue();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (token == null) {
                         filterChain.doFilter(request, response);
                         return;
                     }
 
-                    // si non la responsabiliter est de la valider
-                    String token = authorization.substring(7);
+                    // decode rle token
 
                     Jwt payload  =  jwtService.valider(token);
                     
