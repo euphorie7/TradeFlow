@@ -25,6 +25,8 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.stereotype.Component;
 
 
+// repository ? -> composant qui permet de stocker , modifier ou supprimer des donnees
+
 
 @Component
 public class CookieAuthorizationRequestRepository

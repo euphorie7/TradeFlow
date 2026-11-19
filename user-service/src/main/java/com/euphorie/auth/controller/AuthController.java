@@ -21,6 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.HttpHeaders;
 
 @RestController
 @RequestMapping("/auth")
@@ -55,9 +58,21 @@ public class AuthController {
 
     // POST /auth/signin
     @PostMapping("/signin")
-    public String signIn(
+    public ResponseEntity<Void> signIn(
             @Valid @RequestBody SignInDto dto
     ) {
-        return authService.signIn(dto);
+        String token = authService.signIn(dto);
+
+        ResponseCookie cookie = ResponseCookie.from("access_token", token)
+            .httpOnly(true)
+            .secure(false)
+            .sameSite("Lax")
+            .path("/")
+            .maxAge(3600)
+            .build();
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, cookie.toString())
+            .build();
     }
 }
